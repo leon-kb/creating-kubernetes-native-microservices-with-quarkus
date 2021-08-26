@@ -11,19 +11,18 @@ import java.util.List;
 import java.util.Objects;
 
 @Path("/api/tv")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class TvShowResource {
     private Long sequence = 0L;
     List<TvShow> tvShows = new ArrayList<>();
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         return Response.status(Response.Status.OK).entity(tvShows).build();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(TvShow tvShow) {
         if (tvShow.id != null) {
             return Response.status(400, "Id should not be specified").build();
@@ -39,7 +38,6 @@ public class TvShowResource {
 
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getOneById(@PathParam("id") long id) {
         TvShow entity;
         for (int i = 0; i < tvShows.size(); i++) {
@@ -53,13 +51,15 @@ public class TvShowResource {
     }
 
     @DELETE
-    public void deleteAll() {
+    public Response deleteAll() {
+        sequence = 0L;
         tvShows.clear();
+        return Response.status(Response.Status.OK).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public void deleteOne(@PathParam("id") long id) {
+    public Response deleteOne(@PathParam("id") long id) {
         int index = 0;
         for (; index < tvShows.size(); index++) {
             TvShow tvShow = tvShows.get(index);
@@ -70,5 +70,6 @@ public class TvShowResource {
         if (index < tvShows.size()) {
             tvShows.remove(index);
         }
+        return Response.status(Response.Status.OK).build();
     }
 }
